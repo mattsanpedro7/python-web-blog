@@ -26,7 +26,7 @@ class Blog(object):
                     author=self.author,
                     # the "%" sign means we're expecting 2 digits for day and month
                     # 4 digits for year
-                    date=date)
+                    created_date=date)
         post.save_to_mongo()
 
     def get_posts(self):
@@ -65,7 +65,10 @@ class Blog(object):
         # return an object of type blog
         print('BLOG DATA:', blog_data)
         
-        return cls(author=blog_data['author'],
-                    title=blog_data['title'],
-                    description=blog_data['description'],
-                    id=blog_data['_id'])
+        # # can simplify this as well
+        # return cls(author=blog_data['author'],
+        #             title=blog_data['title'],
+        #             description=blog_data['description'],
+        #             _id=blog_data['_id'])
+
+        return cls(**blog_data)
