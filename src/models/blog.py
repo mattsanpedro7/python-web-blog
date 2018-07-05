@@ -1,15 +1,15 @@
 import uuid
 import datetime
-from models.post import Post
-from models.database import Database
+from post import Post
+from src.common.database import Database
 
 
 class Blog(object):
-    def __init__(self, author, title, description, id=None):
+    def __init__(self, author, title, description, _id=None):
         self.author = author
         self.title = title
         self.description = description
-        self.id = uuid.uuid4().hex if id is None else id
+        self._id = uuid.uuid4().hex if _id is None else _id
 
     def new_post(self):
         title = input('Enter post title: ')
@@ -20,7 +20,7 @@ class Blog(object):
         else:
             date = datetime.datetime.strptime(date, "%d%m%Y")
         print(date)
-        post = Post(blog_id=self.id,
+        post = Post(blog_id=self._id,
                     title=title,
                     content=content,
                     author=self.author,
@@ -30,7 +30,7 @@ class Blog(object):
         post.save_to_mongo()
 
     def get_posts(self):
-        return Post.from_blog(self.id)
+        return Post.from_blog(self._id)
 
     def save_to_mongo(self):
         Database.insert(collection='blogs',
@@ -42,7 +42,7 @@ class Blog(object):
             'author': self.author,
             'title': self.title,
             'description': self.description,
-            'id': self.id
+            '_id': self._id
         }
 
     # @staticmethod
@@ -60,7 +60,7 @@ class Blog(object):
     # instead of data we can now return an object
     @classmethod
     def from_mongo(cls, id):
-        blog_data = Database.find_one(collection='blogs', query={'id': id})
+        blog_data = Database.find_one(collection='blogs', query={'_id': id})
         # create a blog with this blog data...
         # return an object of type blog
         print('BLOG DATA:', blog_data)
@@ -68,4 +68,4 @@ class Blog(object):
         return cls(author=blog_data['author'],
                     title=blog_data['title'],
                     description=blog_data['description'],
-                    id=blog_data['id'])
+                    id=blog_data['_id'])
